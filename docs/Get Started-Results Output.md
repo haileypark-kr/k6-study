@@ -69,3 +69,17 @@ k6 metric의 모든 time-series data points를 전송하고, prometheus time ser
 4. grafana 접속해서 대시보드에 잡히는지 확인
     <img src="../static/grafana-k6.png" width="500">
    
+
+### elasticsearch output으로 time series metric 남기기
+[xk6-output-elasticsearch github](https://github.com/elastic/xk6-output-elasticsearch)
+
+1. ES 실행
+2. xk6-output-elasticsearch가 설치된 k6 이미지 빌드
+   1. 위 깃헙 클론하여 그 내부에서 빌드 필수
+   2. `git clone git@github.com:elastic/xk6-output-elasticsearch.git`
+   3. `cd xk6-output-elasticsearch`
+   4. `docker build -t xk6-output-elasticsearch -f ./Dockerfile .`
+3. k6 컨테이너 실행
+   ```
+   docker run --rm --network aibot30pkg_elastic -e K6_ELASTICSEARCH_URL=http://es:9200 -i xk6-output-elasticsearch run -o output-elasticsearch --tag testid=$(date "+%Y%m%d-%H%M%S")  - <k6-scripts/script.js
+   ```
