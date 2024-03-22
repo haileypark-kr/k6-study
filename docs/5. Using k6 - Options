@@ -1,0 +1,125 @@
+# Options
+
+## Options reference
+모든 옵션을 보려면 [문서](https://grafana.com/docs/k6/latest/using-k6/k6-options/reference/#no-vu-connection-reuse)를 참조하기.   
+아래는 실제 사용할 것 같은 옵션만 작성함.
+
+### Iterations
+
+> default: 1
+
+default function이 수행할 총 iteration 개수.
+- 참고) duration은 테스트 스크립트가 loop를 돌릴 총 시간을 지정한다.
+
+vus 옵션과 함께, iterations 옵션은 `shared iterations executor`로 실행되는 single scenario의 shortcut이다.
+- **왜 `shared` iteration이라고 부르는가?**
+- iteration은 VU에게 공평하게 분배되는 것이 아니라, 좀 더 빨리 실행되는 VU는 다른 VU보다 더 많은 iteration을 완료하려고 할 것이다.
+- 각각의 VU는 다른 VU가 수행할 iteration을 가져오면서까지 가능한 많은 iteration을 끝내려고 노력한다. 
+- 따라서, iteration 시간에 따라 어떤 VU는 다른 VU보다 더 많은 iteration을 수행하게 된다.
+- **만약 모든 VU가 동일한 fixed number of iteration을 수행하길 원한다면, `per-VU iterations executor`를 사용해야 한다.**
+
+### No VU connection reuse
+
+> default: false (VU connection을 재사용한다.)
+
+```js
+export const options = {
+  noVUConnectionReuse: true,
+};
+```
+
+### Scenarios
+
+> default: null (별도 설정 없음. default 함수, shared-iterations executor 사용)
+
+다양한 실행 패턴을 정의하거나, 다양한 VU, iteration 스케쥴링 설정이나 다른 함수를 실행하고 싶다면 시나리오를 정의해야 한다.
+
+```js
+export const options = {
+  scenarios: {
+    my_api_scenario: {
+      // arbitrary scenario name
+      executor: 'ramping-vus',
+      startVUs: 0,
+      stages: [
+        { duration: '5s', target: 100 },
+        { duration: '5s', target: 0 },
+      ],
+      gracefulRampDown: '10s',
+      env: { MYVAR: 'example' },
+      tags: { my_tag: 'example' },
+    },
+  },
+};
+```
+
+### Stages
+
+> default: `vus`와 `duration` 설정에 따라 다르다.
+
+
+특정 period동안 VU의 타겟 개수를 ramp up / down 할 수 있는 설정이다.    
+`ramping VUs executor`에서 실행되는 `single scenario`의 shortcut이다.     
+`vus` 옵션이 같이 사용되면, vus 옵션은 startVUs 옵션으로 들어간다.
+
+#### 3분동안 VU를 1 -> 10으로, 5분 동안 유지, 10분동안 10 -> 35로 올리고, 3분동안 35 -> 0으로 줄이는 설정
+
+```js
+// The following config would have k6 ramping up from 1 to 10 VUs for 3 minutes,
+// then staying flat at 10 VUs for 5 minutes, then ramping up from 10 to 35 VUs
+// over the next 10 minutes before finally ramping down to 0 VUs for another
+// 3 minutes.
+
+export const options = {
+  stages: [
+    { duration: '3m', target: 10 },
+    { duration: '5m', target: 10 },
+    { duration: '10m', target: 35 },
+    { duration: '3m', target: 0 },
+  ],
+};
+```
+
+
+
+### Thresholds
+
+> default: null
+
+테스트의 성공/실패 여부를 결정하기 위한 조건.
+
+```js
+export const options = {
+  thresholds: {
+    'http_req_duration': ['avg<100', 'p(95)<200'],
+    'http_req_connecting{cdnAsset:true}': ['p(95)<100'],
+  },
+};
+```
+
+### User agent
+
+
+> default: 'k6/0.27.0'
+
+
+HTTP Request를 날릴 때 `User-Agent` 헤더값을 설정할 수 있다.
+
+```js
+export const options = {
+  userAgent: 'MyK6UserAgentString/1.0',
+};
+```
+
+### VUs
+
+> default: 1
+
+병렬적으로 돌릴 VU의 개수. iteration이나 duration과 같이 설정한다.
+
+```js
+export const options = {
+  vus: 10,
+  duration: '1h',
+};
+```

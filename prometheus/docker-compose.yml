@@ -13,6 +13,7 @@ services:
       - --web.enable-remote-write-receiver
       - --enable-feature=native-histograms
       - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.retention.time=1d
     restart: always
     networks:
       - k6
