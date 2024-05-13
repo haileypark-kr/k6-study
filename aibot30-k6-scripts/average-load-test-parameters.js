@@ -1,12 +1,19 @@
 
 const options = {
-    duration: '10s'
+    duration: '10s',
+    vus: 1,
     // `stages`를 사용하면 `ramping-vus` executor를 디폴트로 사용한다.
     //   stages: [
     //     { duration: '30s', target: 10 }, // traffic ramp-up from 1 to 100 users over 5 minutes.
     //     { duration: '1m', target: 10 }, // stay at 100 users for 30 minutes
     //     { duration: '30s', target: 0 }, // ramp-down to 0 users
     //   ],
+    thresholds: {
+        'http_req_failed': ['rate<0.001'], // HTTP response status code의 에러 비율 < 0.1%
+        'http_req_duration{name:2.의도추론}': ['p(99)<1000'], // 의도 추론용 talk 요청 시간이 1초 이내
+        'http_req_duration{name:3.슬롯필링}': ['p(99)<1000'], // 슬롯필링용 talk 요청 시간이 1초 이내
+        'valid_response': ['rate>0.95'],   // threshold 이름은 스크립트 내부의 custom metric 이름과 동일.
+    },
 };
 
 const userMessages = [
@@ -27,7 +34,7 @@ export const config = {
     k6Options: options,
 
     sleepSeconds: 1,
-    
+
     userMessages: userMessages,
     expectedBotMessages: expectedBotMessages,
 }

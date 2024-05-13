@@ -1,7 +1,17 @@
+/**
+ $ K6_PROMETHEUS_RW_SERVER_URL=http://localhost:19090/api/v1/write \                       
+    K6_PROMETHEUS_RW_TREND_AS_NATIVE_HISTOGRAM=true \
+    k6 run -o experimental-prometheus-rw --tag testid=$(date "+%Y%m%d-%H%M%S") average-load-test.js
+ */
 import http from 'k6/http';
+import { Rate } from 'k6/metrics';
 import { sleep, check, fail } from 'k6';
 import { config } from './average-load-test-parameters.js'
 
+// Custom Metric 추가
+export const RateValidResponse = new Rate('valid_response');
+
+// 설정
 const urlPrefix = config.urlPrefix;
 const channelToken = config.channelToken;
 const channelCode = config.channelCode;
@@ -23,7 +33,7 @@ export default () => {
     slotFilling(sessionKey, config.userMessages[2], config.expectedBotMessages[2]);
     sleep(sleepSeconds);
 
-    close();
+    close(sessionKey);
     sleep(sleepSeconds);
 };
 
@@ -47,21 +57,25 @@ const start = () => {
 
     const res = http.post(url, JSON.stringify(body), {
         tags: {
-            name: "START"
+            name: "1.START"
         },
         headers: { 'Content-Type': 'application/json' },
     });
     const sessionKey = JSON.parse(res.body).sessionKey;
 
-    if (
-        !check(res, {
-            'is status 200': (r) => r.status === 200,
-            'body size is bigger than 0': (r) => r.body.length > 0,
-            'created session key': (r) => sessionKey != null && sessionKey.includes('gw1_')
-        })
-    ) {
+    const valid = check(res, {
+        'is status 200': (r) => r.status === 200,
+        'body size is bigger than 0': (r) => r.body.length > 0,
+        'created session key': (r) => sessionKey != null && sessionKey.includes('gw1_')
+    });
+
+    RateValidResponse.add(valid);
+
+    if (!valid) {
+        console.error("Failed to start -", res);
         fail(`status code was not 200(${res.status}) or sessionKey was not in response body`);
     }
+
     return sessionKey;
 }
 
@@ -88,22 +102,26 @@ const findIntent = (sessionKey, intent, expectedMessage) => {
 
     const res = http.post(url, JSON.stringify(body), {
         tags: {
-            name: "FindIntent"
+            name: "2.의도추론"
         },
         headers: { 'Content-Type': 'application/json' },
     });
 
     const resBody = JSON.parse(res.body);
 
-    if (
-        !check(res, {
-            'is status 200': (r) => r.status === 200,
-            'body size is bigger than 0': (r) => r.body.length > 0,
-            'has slot-filling messages': (r) => resBody.messages != null && resBody.messages.length > 0,
-            'has valid message': (r) => resBody.messages[0].message.includes(expectedMessage)
-        })
-    ) {
-        fail(`status code was not 200(${res.status}) or expected messages were not present in response body(${resBody.messages})`);
+    const valid = check(res, {
+        'is status 200': (r) => r.status === 200,
+        'body size is bigger than 0': (r) => r.body.length > 0,
+        'type is message': (r) => resBody.type === 'MESSAGE',
+        'has slot-filling messages': (r) => resBody.messages != null && resBody.messages.length > 0,
+        'has valid message': (r) => resBody.messages.length > 0 ? resBody.messages[0].message.includes(expectedMessage) : false
+    });
+
+    RateValidResponse.add(valid);
+
+    if (!valid) {
+        console.error("Failed to find intent -", sessionKey, resBody);
+        fail(`status code was not 200(${res.status}) or expected messages were not in response body(${resBody.messages})`);
     }
 }
 
@@ -130,22 +148,26 @@ const slotFilling = (sessionKey, inputMessage, expectedMessage) => {
 
     const res = http.post(url, JSON.stringify(body), {
         tags: {
-            name: "SLOT"
+            name: "3.슬롯필링"
         },
         headers: { 'Content-Type': 'application/json' },
     });
 
     const resBody = JSON.parse(res.body);
 
-    if (
-        !check(res, {
-            'is status 200': (r) => r.status === 200,
-            'body size is bigger than 0': (r) => r.body.length > 0,
-            'has slot-filling messages': (r) => resBody.messages != null && resBody.messages.length > 0,
-            'has valid message': (r) => resBody.messages[0].message.includes(expectedMessage)
-        })
-    ) {
-        fail(`status code was not 200(${res.status}) or expected messages were not present in response body(${resBody.messages})`);
+    const valid = check(res, {
+        'is status 200': (r) => r.status === 200,
+        'body size is bigger than 0': (r) => r.body.length > 0,
+        'type is message': (r) => resBody.type === 'MESSAGE',
+        'has slot-filling messages': (r) => resBody.messages != null && resBody.messages.length > 0,
+        'has valid message': (r) => resBody.messages.length > 0 ? resBody.messages[0].message.includes(expectedMessage) : false
+    });
+
+    RateValidResponse.add(valid);
+
+    if (!valid) {
+        console.error("Failed to slot-filling -", sessionKey, resBody);
+        fail(`status code was not 200(${res.status}) or expected messages were not in response body(${resBody.messages})`);
     }
 }
 
@@ -162,7 +184,7 @@ const close = (sessionKey) => {
         "timestamp": timestamp(),
         "queries": [
             {
-                "message": inputMessage
+                "message": "종료"
             }
         ],
         "type": "TALK"
@@ -170,20 +192,23 @@ const close = (sessionKey) => {
 
     const res = http.post(url, JSON.stringify(body), {
         tags: {
-            name: "CLOSE"
+            name: "4.CLOSE"
         },
         headers: { 'Content-Type': 'application/json' },
     });
 
     const resBody = JSON.parse(res.body);
 
-    if (
-        !check(res, {
-            'is status 200': (r) => r.status === 200,
-            'body size is bigger than 0': (r) => r.body.length > 0,
-            'is close type': (r) => resBody.type != null && resBody.type === "CLOSE"
-        })
-    ) {
+    const valid = check(res, {
+        'is status 200': (r) => r.status === 200,
+        'body size is bigger than 0': (r) => r.body.length > 0,
+        'is close type': (r) => resBody.type != null && resBody.type === "CLOSE"
+    });
+
+    RateValidResponse.add(valid);
+
+    if (!valid) {
+        console.error("Failed to close -", sessionKey, resBody);
         fail(`status code was not 200(${res.status}) or response type was not CLOSE(${resBody.type})`);
     }
 }
