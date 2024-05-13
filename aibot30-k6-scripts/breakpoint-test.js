@@ -1,12 +1,12 @@
 /**
  $ K6_PROMETHEUS_RW_SERVER_URL=http://localhost:19090/api/v1/write \                
     K6_PROMETHEUS_RW_TREND_AS_NATIVE_HISTOGRAM=true \
-    k6 run -o experimental-prometheus-rw --tag testid=$(date "+%Y%m%d-%H%M%S") load-test.js  
+    k6 run -o experimental-prometheus-rw --tag testid=$(date "+%Y%m%d-%H%M%S") breakpoint-test.js  
  */
 import http from 'k6/http';
 import { Rate } from 'k6/metrics';
 import { sleep, check, fail } from 'k6';
-import { config } from './average-load-test-import-configs.js'
+import { config } from './breakpoint-test-config.js'
 
 
 // Custom Metric 추가
@@ -35,7 +35,7 @@ export default () => {
     sleep(sleepSeconds);
 
     close(sessionKey);
-    sleep(sleepSeconds);
+    // breakpoint 테스트 끝에는 sleep 넣지 말아라.
 };
 
 
