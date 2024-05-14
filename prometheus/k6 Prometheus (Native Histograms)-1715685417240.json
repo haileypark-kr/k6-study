@@ -37,12 +37,6 @@
     },
     {
       "type": "panel",
-      "id": "text",
-      "name": "Text",
-      "version": ""
-    },
-    {
-      "type": "panel",
       "id": "timeseries",
       "name": "Time series",
       "version": ""
@@ -237,7 +231,7 @@
               },
               {
                 "id": "custom.axisSoftMax",
-                "value": 20
+                "value": 100
               }
             ]
           },
@@ -261,6 +255,14 @@
                   "fixedColor": "blue",
                   "mode": "fixed"
                 }
+              },
+              {
+                "id": "custom.axisSoftMin",
+                "value": 0
+              },
+              {
+                "id": "custom.axisSoftMax",
+                "value": 2
               }
             ]
           },
@@ -538,6 +540,71 @@
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
+      "description": "요청마다 유효한 응답인지 체크한다.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "green",
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 12,
+        "y": 12
+      },
+      "id": 26,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.4.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "expr": "k6_valid_response_rate{testid=~\"$testid\"}*100",
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "AIBOT3.0 Valid Response Rate",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "description": "Select a different quantile to change the query",
       "fieldConfig": {
         "defaults": {
@@ -561,7 +628,7 @@
       "gridPos": {
         "h": 3,
         "w": 6,
-        "x": 12,
+        "x": 18,
         "y": 12
       },
       "id": 25,
@@ -1853,7 +1920,7 @@
         "cellHeight": "sm",
         "footer": {
           "countRows": false,
-          "enablePagination": true,
+          "enablePagination": false,
           "fields": "",
           "reducer": [
             "sum"
@@ -2096,7 +2163,7 @@
         "cellHeight": "sm",
         "footer": {
           "countRows": false,
-          "enablePagination": true,
+          "enablePagination": false,
           "fields": "",
           "reducer": [
             "sum"
@@ -2297,30 +2364,6 @@
       ],
       "title": "Checks Success Rate (aggregate individual checks)",
       "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 24,
-        "x": 0,
-        "y": 56
-      },
-      "id": 23,
-      "options": {
-        "code": {
-          "language": "plaintext",
-          "showLineNumbers": false,
-          "showMiniMap": false
-        },
-        "content": "### Visualize other k6 results  \n\nAt the top of the dashboard, click `Add` and select `Visualization` from the dropdown menu. Choose the visualization type and input the PromQL queries for the `k6_` metric(s).\n\nAlternatively, click on the `Explore` icon on the menu bar and input the queries for the `k6_` metric(s). From `Explore`, you can add new Panels to this dashboard. \n\nNote that all <a href=\"https://k6.io/docs/using-k6/metrics/\" target=\"_blank\">k6 metrics</a> are prefixed with the `k6_` namespace when sent to Prometheus.",
-        "mode": "markdown"
-      },
-      "pluginVersion": "10.4.0",
-      "type": "text"
     }
   ],
   "refresh": "",
@@ -2420,6 +2463,6 @@
   "timezone": "",
   "title": "k6 Prometheus (Native Histograms)",
   "uid": "a3b2aaa8-bb66-4008-a1d8-16c49afedbf0",
-  "version": 26,
+  "version": 30,
   "weekStart": ""
 }
