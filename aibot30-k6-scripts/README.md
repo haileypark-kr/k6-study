@@ -47,8 +47,53 @@ CUSTOM_K6_TEST_TYPE=breakpoint-test \
 k6 run -o experimental-prometheus-rw --tag testid=$(date "+%Y%m%d-%H%M%S") breakpoint-test.js
 ```
 
+
 ## k6 docker로 실행
-TODO
+
+로컬 환경에서는 `prometheus_k6` network가 host와 연결되어 있지 않기 때문에 localhost로 channelgw를 호출할 수 없음.
+EPC에서는 실행 가능.
+
+```shell
+# average load test
+docker run --rm --network prometheus_k6 \
+-v $(pwd):/mnt
+-e K6_PROMETHEUS_RW_SERVER_URL=http://prometheus:9090/api/v1/write \
+-e K6_PROMETHEUS_RW_TREND_AS_NATIVE_HISTOGRAM=true \
+-e CUSTOM_K6_TEST_TYPE=average-load-test \
+-i grafana/k6 run -o experimental-prometheus-rw --tag testid=$(date "+%Y%m%d-%H%M%S")  - <k6-scripts/average-load-test.js
+
+# smoke test
+docker run --rm --network prometheus_k6 \
+-v $(pwd):/mnt
+-e K6_PROMETHEUS_RW_SERVER_URL=http://prometheus:9090/api/v1/write \
+-e K6_PROMETHEUS_RW_TREND_AS_NATIVE_HISTOGRAM=true \
+-e CUSTOM_K6_TEST_TYPE=smoke-test \
+-i grafana/k6 run -o experimental-prometheus-rw --tag testid=$(date "+%Y%m%d-%H%M%S")  - <k6-scripts/average-load-test.js
+
+# Soak test
+docker run --rm --network prometheus_k6 \
+-v $(pwd):/mnt
+-e K6_PROMETHEUS_RW_SERVER_URL=http://prometheus:9090/api/v1/write \
+-e K6_PROMETHEUS_RW_TREND_AS_NATIVE_HISTOGRAM=true \
+-e CUSTOM_K6_TEST_TYPE=soak-test \
+-i grafana/k6 run -o experimental-prometheus-rw --tag testid=$(date "+%Y%m%d-%H%M%S")  - <k6-scripts/average-load-test.js
+
+# Stress test
+docker run --rm --network prometheus_k6 \
+-v $(pwd):/mnt
+-e K6_PROMETHEUS_RW_SERVER_URL=http://prometheus:9090/api/v1/write \
+-e K6_PROMETHEUS_RW_TREND_AS_NATIVE_HISTOGRAM=true \
+-e CUSTOM_K6_TEST_TYPE=stress-test \
+-i grafana/k6 run -o experimental-prometheus-rw --tag testid=$(date "+%Y%m%d-%H%M%S")  - <k6-scripts/average-load-test.js
+
+# breakpoint test
+docker run --rm --network prometheus_k6 \
+-v $(pwd):/mnt
+-e K6_PROMETHEUS_RW_SERVER_URL=http://prometheus:9090/api/v1/write \
+-e K6_PROMETHEUS_RW_TREND_AS_NATIVE_HISTOGRAM=true \
+-e CUSTOM_K6_TEST_TYPE=breakpoint-test \
+-i grafana/k6 run -o experimental-prometheus-rw --tag testid=$(date "+%Y%m%d-%H%M%S")  - <k6-scripts/breakpoint-test.js
+```
 
 
 
