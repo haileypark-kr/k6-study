@@ -1,7 +1,7 @@
 {
-    "urlPrefix": "http://localhost:8081/gateway/voice/",
-    "channelCode": "test2",
-    "channelToken": "592f9d6c-31ac-44a9-8d12-13df1c23ee2d",
+    "urlPrefix": "http://10.213.202.73:8080/channelgw/gateway/voice/",
+    "channelCode": "e8c2899d-66b6-4075-a7ad-19ffd7b7719b",
+    "channelToken": "202d2055-1f06-4191-a0c8-fefdaa5149b0",
     "userKey": "",
     "k6Options": {
         "vus": 2,
