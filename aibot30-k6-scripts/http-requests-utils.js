@@ -1,5 +1,5 @@
 import http from 'k6/http';
-import { config } from './configs/import-configs.js'
+import { config } from '/mnt/configs/import-configs.js'
 import { check, fail } from 'k6';
 
 const urlPrefix = config.urlPrefix;

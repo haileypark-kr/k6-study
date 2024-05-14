@@ -5,8 +5,8 @@
  */
 import { Rate } from 'k6/metrics';
 import { sleep } from 'k6';
-import { config } from './configs/import-configs.js';
-import { start, findIntent, slotFilling, close } from './http-requests-utils.js';
+import { config } from '/mnt/configs/import-configs.js';
+import { start, findIntent, slotFilling, close } from '/mnt/http-requests-utils.js';
 
 // Custom Metric 추가
 export const RateValidResponse = new Rate('valid_response');
