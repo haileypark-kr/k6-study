@@ -93,7 +93,7 @@ export const findIntent = (sessionKey, intent, expectedMessage, RateValidRespons
 
     if (!valid) {
         console.error("Failed to find intent -", sessionKey, resBody);
-        fail(`status code was not 200(${res.status}) or expected messages were not in response body(${resBody})`);
+        fail(`status code was not 200(${res.status}) or expected messages were not in response body(${res.body})`);
     }
 }
 
@@ -140,7 +140,7 @@ export const slotFilling = (sessionKey, inputMessage, expectedMessage, RateValid
 
     if (!valid) {
         console.error("Failed to slot-filling -", sessionKey, resBody);
-        fail(`status code was not 200(${res.status}) or expected messages were not in response body(${resBody})`);
+        fail(`status code was not 200(${res.status}) or expected messages were not in response body(${res.body})`);
     }
 }
 
