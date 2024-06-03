@@ -11,19 +11,43 @@
             },
             {
                 "duration": "5m",
+                "target": 38
+            },
+            {
+                "duration": "1m",
                 "target": 45
+            },
+            {
+                "duration": "5m",
+                "target": 45
+            },
+            {
+                "duration": "1m",
+                "target": 53
             },
             {
                 "duration": "5m",
                 "target": 53
             },
             {
-                "duration": "5m",
+                "duration": "1m",
                 "target": 60
             },
             {
                 "duration": "5m",
+                "target": 60
+            },
+            {
+                "duration": "1m",
                 "target": 68
+            },
+            {
+                "duration": "5m",
+                "target": 68
+            },
+            {
+                "duration": "1m",
+                "target": 75
             },
             {
                 "duration": "5m",
