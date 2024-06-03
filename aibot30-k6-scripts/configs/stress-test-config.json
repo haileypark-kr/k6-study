@@ -6,12 +6,28 @@
     "k6Options": {
         "stages": [
             {
-                "duration": "10m",
-                "target": 112
+                "duration": "5m",
+                "target": 38
             },
             {
-                "duration": "30m",
-                "target": 112
+                "duration": "5m",
+                "target": 45
+            },
+            {
+                "duration": "5m",
+                "target": 53
+            },
+            {
+                "duration": "5m",
+                "target": 60
+            },
+            {
+                "duration": "5m",
+                "target": 67.5
+            },
+            {
+                "duration": "5m",
+                "target": 75
             },
             {
                 "duration": "5m",
