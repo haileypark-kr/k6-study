@@ -6,12 +6,28 @@
     "k6Options": {
         "stages": [
             {
-                "duration": "10m",
-                "target": 112
+                "duration": "5m",
+                "target": 38
             },
             {
-                "duration": "30m",
-                "target": 112
+                "duration": "5m",
+                "target": 45
+            },
+            {
+                "duration": "5m",
+                "target": 53
+            },
+            {
+                "duration": "5m",
+                "target": 60
+            },
+            {
+                "duration": "5m",
+                "target": 68
+            },
+            {
+                "duration": "5m",
+                "target": 75
             },
             {
                 "duration": "5m",
@@ -19,44 +35,42 @@
             }
         ],
         "thresholds": {
-            "thresholds": {
-                "http_req_failed": [
-                    {
-                        "threshold": "rate<0.001",
-                        "abortOnFail": false
-                    }
-                ],
-                "http_req_duration{name:1.START}": [
-                    {
-                        "threshold": "p(99)<200",
-                        "abortOnFail": false
-                    }
-                ],
-                "http_req_duration{name:2.의도추론}": [
-                    {
-                        "threshold": "p(99)<1000",
-                        "abortOnFail": false
-                    }
-                ],
-                "http_req_duration{name:3.슬롯필링}": [
-                    {
-                        "threshold": "p(99)<1000",
-                        "abortOnFail": false
-                    }
-                ],
-                "http_req_duration{name:4.CLOSE}": [
-                    {
-                        "threshold": "p(99)<200",
-                        "abortOnFail": false
-                    }
-                ],
-                "valid_response": [
-                    {
-                        "threshold": "rate>0.95",
-                        "abortOnFail": false
-                    }
-                ]
-            }
+            "http_req_failed": [
+                {
+                    "threshold": "rate<0.001",
+                    "abortOnFail": false
+                }
+            ],
+            "http_req_duration{name:1.START}": [
+                {
+                    "threshold": "p(99)<200",
+                    "abortOnFail": false
+                }
+            ],
+            "http_req_duration{name:2.의도추론}": [
+                {
+                    "threshold": "p(99)<1000",
+                    "abortOnFail": false
+                }
+            ],
+            "http_req_duration{name:3.슬롯필링}": [
+                {
+                    "threshold": "p(99)<1000",
+                    "abortOnFail": false
+                }
+            ],
+            "http_req_duration{name:4.CLOSE}": [
+                {
+                    "threshold": "p(99)<200",
+                    "abortOnFail": false
+                }
+            ],
+            "valid_response": [
+                {
+                    "threshold": "rate>0.95",
+                    "abortOnFail": false
+                }
+            ]
         }
     },
     "sleepSeconds": 1,
