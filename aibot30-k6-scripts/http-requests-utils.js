@@ -2,7 +2,7 @@ import http from 'k6/http';
 import { config } from './configs/import-configs.js'
 import { check, fail } from 'k6';
 
-const urlPrefix = config.urlPrefix;
+const startUrlPrefix = config.startUrlPrefix;
 const channelToken = config.channelToken;
 const channelCode = config.channelCode;
 const userKey = config.userKey;
@@ -14,131 +14,45 @@ const userKey = config.userKey;
  * @returns 세션키
  */
 export const start = (RateValidResponse) => {
-    const url = urlPrefix + "/v1/start";
-    const body = {
-        "channelId": channelToken,
-        "userKey": userKey,
-        "platformType":"WEB"
-    };
+    const startUrl = startUrlPrefix.replace("{channelCode}", channelCode);
+    const chatHtml = http.get(startUrl);
 
-    const res = http.post(url, JSON.stringify(body), {
-        tags: {
-            name: "1.START"
-        },
-        headers: { 'Content-Type': 'application/json' },
-    });
-    const sessionKey = JSON.parse(res.body).data.sessionKey;
+    let sessionKey = null;
+    if (chatHtml.status == 200 && chatHtml.body != null && chatHtml.body.length > 0) {
+        sessionKey = parseChatHtml(chatHtml.body);
+    }
 
-    const valid = check(res, {
+    const valid = check(chatHtml, {
         'is status 200': (r) => r.status === 200,
         'body size is bigger than 0': (r) => r.body.length > 0,
-        'created session key': (r) => sessionKey != null && sessionKey.includes('gw1_')
+        'created session key': (r) => sessionKey != null && sessionKey.includes('gw1_web')
     });
 
     RateValidResponse.add(valid);
 
     if (!valid) {
-        console.error("Failed to start -", res);
-        fail(`status code was not 200(${res.status}) or sessionKey was not in response body`);
-    } else {
-        console.info("Success to start -", res);
+        console.error("Failed to start");
+        fail(`status code was not 200(${chatHtml.status}) or sessionKey was not in response body`);
     }
 
     return sessionKey;
 }
 
-
 /**
- * 의도 추론
- * @param {*} sessionKey start에서 생성된 세션키
- * @param {*} intent 
- * @param {*} expectedMessage 예상된 봇 메시지 (validation 체크를 위한)
- * @param {*} RateValidResponse 유효 응답 체크하는 k6 custom Rate
+ * chat.html에서 세션키를 추출한다.
+ * @param {*} inputHtml chat.html
+ * @returns 세션키
  */
-export const findIntent = (sessionKey, intent, expectedMessage, RateValidResponse) => {
-    const url = urlPrefix + channelCode + "/v1/talk";
-    const body = {
-        "sessionKey": sessionKey,
-        "transactionId": "test-transaction-id-002",
-        "timestamp": timestamp(),
-        "queries": [
-            {
-                "message": intent
-            }
-        ],
-        "type": "TALK"
+const parseChatHtml = (inputHtml) => {
+    const sessionKeyMatch = inputHtml.match(/var sessionKey = "(.*?)";/);
+
+    // sessionKey 값
+    let sessionKey = null;
+    if (sessionKeyMatch && sessionKeyMatch[1]) {
+        sessionKey = sessionKeyMatch[1];
     }
 
-    const res = http.post(url, JSON.stringify(body), {
-        tags: {
-            name: "2.의도추론"
-        },
-        headers: { 'Content-Type': 'application/json' },
-    });
-
-    const resBody = JSON.parse(res.body);
-
-    const valid = check(res, {
-        'is status 200': (r) => r.status === 200,
-        'body size is bigger than 0': (r) => r.body.length > 0,
-        'type is message': (r) => resBody.type === 'MESSAGE',
-        'has slot-filling messages': (r) => resBody.messages != null && resBody.messages.length > 0,
-        'has valid message': (r) => resBody.messages.length > 0 ? resBody.messages[0].message.includes(expectedMessage) : false
-    });
-
-    RateValidResponse.add(valid);
-
-    if (!valid) {
-        console.error("Failed to find intent -", sessionKey, resBody);
-        fail(`status code was not 200(${res.status}) or expected messages were not in response body(${res.body})`);
-    }
-}
-
-
-/**
- * 슬롯필링 진행
- * @param {*} sessionKey 
- * @param {*} inputMessage 사용자 발화
- * @param {*} expectedMessage 예상된 봇 메시지 (validation 체크를 위한)
- * @param {*} RateValidResponse 유효 응답 체크하는 k6 custom Rate
- */
-export const slotFilling = (sessionKey, inputMessage, expectedMessage, RateValidResponse) => {
-    const url = urlPrefix + channelCode + "/v1/talk";
-    const body = {
-        "sessionKey": sessionKey,
-        "transactionId": "test-transaction-id-003",
-        "timestamp": timestamp(),
-        "queries": [
-            {
-                "message": inputMessage
-            }
-        ],
-        "type": "TALK"
-    }
-
-    const res = http.post(url, JSON.stringify(body), {
-        tags: {
-            name: "3.슬롯필링"
-        },
-        headers: { 'Content-Type': 'application/json' },
-    });
-
-    const resBody = JSON.parse(res.body);
-
-    const valid = check(res, {
-        'is status 200': (r) => r.status === 200,
-        'body size is bigger than 0': (r) => r.body.length > 0,
-        'type is message': (r) => resBody.type === 'MESSAGE',
-        'has slot-filling messages': (r) => resBody.messages != null && resBody.messages.length > 0,
-        'has valid message': (r) => resBody.messages.length > 0 ? resBody.messages[0].message.includes(expectedMessage) : false
-    });
-
-    RateValidResponse.add(valid);
-
-    if (!valid) {
-        console.error("Failed to slot-filling -", sessionKey, resBody);
-        fail(`status code was not 200(${res.status}) or expected messages were not in response body(${res.body})`);
-    }
+    return sessionKey;
 }
 
 

@@ -1,7 +1,8 @@
 {
-    "urlPrefix": "http://localhost:8081/gateway/web",
-    "channelCode": "K6-LOAD-TEST-CHATBOT-CH",
-    "channelToken": "43ee3e9c-4bf0-4a3b-b843-236f4fc363fe",
+    "startUrlPrefix": "http://localhost:8082/{channelCode}/chat.html",
+    "socketUrlPrefix": "ws://localhost:8081/ws-stomp/111/vkmmrevh/websocket",
+    "channelCode": "chatbotloadtest",
+    "channelToken": "91812fa5-eb2b-4a20-932d-f5daee671b91",
     "userKey": "",
     "k6Options": {
         "stages": [
@@ -25,33 +26,9 @@
                     "abortOnFail": false
                 }
             ],
-            "http_req_duration{name:1.START}": [
-                {
-                    "threshold": "p(99)<200",
-                    "abortOnFail": false
-                }
-            ],
-            "http_req_duration{name:2.의도추론}": [
-                {
-                    "threshold": "p(99)<1000",
-                    "abortOnFail": false
-                }
-            ],
-            "http_req_duration{name:3.슬롯필링}": [
-                {
-                    "threshold": "p(99)<1000",
-                    "abortOnFail": false
-                }
-            ],
-            "http_req_duration{name:4.CLOSE}": [
-                {
-                    "threshold": "p(99)<200",
-                    "abortOnFail": false
-                }
-            ],
             "valid_response": [
                 {
-                    "threshold": "rate>0.95",
+                    "threshold": "rate>0.99",
                     "abortOnFail": false
                 }
             ]
@@ -59,21 +36,17 @@
     },
     "sleepSeconds": 1,
     "userMessages": [
-        "커피 주문",
-        "아메리카노 마실래",
-        "톨 사이즈"
+        "CONNECT\naccept-version:1.1,1.0\nheart-beat:10000,10000\n\n\u0000",
+        "SUBSCRIBE\nid:sub-0\ndestination:/sub/room/{sessionKey}\n\n\u0000",
+        "SEND\ndestination:/pub/message\ncontent-length:450\n\n{\"sessionKey\":\"{sessionKey}\",\"channelToken\":\"{channelToken}\",\"query\":\"커피 주문\",\"queryValue\":null,\"isChangeHuman\":false,\"isClose\":false,\"inputStatus\":\"WRITING\",\"userKey\":null,\"chatInputType\":\"DIRECT\",\"id\":\"66MZ1zGDtE7p7Ga8x3Re\",\"currentTime\":\"오후 3:43\",\"className\":\"name\",\"type\":\"TALK\",\"personalData\":false,\"displayText\":\"커피 주문\",\"recommend\":false,\"intentId\":\"\",\"webSocketTalkType\":\"TALK\"}\u0000",
+        "SEND\ndestination:/pub/message\ncontent-length:459\n\n{\"sessionKey\":\"{sessionKey}\",\"channelToken\":\"{channelToken}\",\"query\":\"아메리카노요\",\"queryValue\":null,\"isChangeHuman\":false,\"isClose\":true,\"inputStatus\":\"WRITING\",\"userKey\":null,\"chatInputType\":\"DIRECT\",\"id\":\"5BsqUoiQsK8yMTsXb5F8\",\"currentTime\":\"오후 3:43\",\"className\":\"name\",\"type\":\"TALK\",\"personalData\":false,\"displayText\":\"아메리카노요\",\"recommend\":false,\"intentId\":\"\",\"webSocketTalkType\":\"TALK\"}\u0000",
+        "SEND\ndestination:/pub/message\ncontent-length:447\n\n{\"sessionKey\":\"{sessionKey}\",\"channelToken\":\"{channelToken}\",\"query\":\"톨사이즈\",\"queryValue\":null,\"isChangeHuman\":false,\"isClose\":true,\"inputStatus\":\"WRITING\",\"userKey\":null,\"chatInputType\":\"DIRECT\",\"id\":\"MDKNr0EWr8M1jXfc8exJ\",\"currentTime\":\"오후 3:44\",\"className\":\"name\",\"type\":\"TALK\",\"personalData\":false,\"displayText\":\"톨사이즈\",\"recommend\":false,\"intentId\":\"\",\"webSocketTalkType\":\"TALK\"}\u0000"
     ],
     "expectedBotMessages": [
+        "o",
+        "CONNECTED",
         "커피 뭐 마실래? 아메리카노, 카페라떼, 콜드브루 중에 골라봐.",
-        "아메리카노 를 무슨 사이즈로 시킬래? 톨, 벤티, 그란데 중에 말해줘.",
-        "아메리카노 톨 로  한 잔 시킬게!"
-    ],
-    "wsMessages": [
-        "CONNECT\naccept-version:1.1,1.0\nheart-beat:10000,10000\n\n\u0000",
-        "SUBSCRIBE\nid:sub-0\ndestination:/sub/room/gw1_webSessionKey\n\n\u0000",
-        "SEND\ndestination:/pub/message/TEST\ncontent-length:471\n\n{\"sessionKey\":\"gw1_webSessionKey\",\"channelToken\":\"43ee3e9c-4bf0-4a3b-b843-236f4fc363fe\",\"query\":\"커피 주문\",\"queryValue\":null,\"isChangeHuman\":false,\"isClose\":false,\"inputStatus\":\"TALK\",\"userKey\":\"\",\"chatInputType\":\"DIRECT\",\"id\":\"vbX28DM3mg4NovDHlTIo\",\"currentTime\":\"오후 5:36\",\"className\":\"name\",\"type\":\"TALK\",\"personalData\":false,\"displayText\":\"커피 주문\",\"recommend\":false,\"intentId\":\"\",\"webSocketTalkType\":\"TALK\",\"callForwardingNumber\":\"\"}\u0000",
-        "SEND\ndestination:/pub/message/TEST\ncontent-length:494\n\n{\"sessionKey\":\"gw1_webSessionKey\",\"channelToken\":\"43ee3e9c-4bf0-4a3b-b843-236f4fc363fe\",\"query\":\"아메리카노 마실래\",\"queryValue\":null,\"isChangeHuman\":false,\"isClose\":true,\"inputStatus\":\"TALK\",\"userKey\":\"\",\"chatInputType\":\"DIRECT\",\"id\":\"zDScMxrhPR0epM9Hgh7k\",\"currentTime\":\"오후 5:36\",\"className\":\"name\",\"type\":\"TALK\",\"personalData\":false,\"displayText\":\"아메리카노 마실래\",\"recommend\":false,\"intentId\":\"\",\"webSocketTalkType\":\"TALK\",\"callForwardingNumber\":\"\"}\u0000",
-        "SEND\ndestination:/pub/message/TEST\ncontent-length:470\n\n{\"sessionKey\":\"gw1_webSessionKey\",\"channelToken\":\"43ee3e9c-4bf0-4a3b-b843-236f4fc363fe\",\"query\":\"톨 사이즈\",\"queryValue\":null,\"isChangeHuman\":false,\"isClose\":true,\"inputStatus\":\"TALK\",\"userKey\":\"\",\"chatInputType\":\"DIRECT\",\"id\":\"OYCGWvSpSVM6fgLFjoft\",\"currentTime\":\"오후 5:36\",\"className\":\"name\",\"type\":\"TALK\",\"personalData\":false,\"displayText\":\"톨 사이즈\",\"recommend\":false,\"intentId\":\"\",\"webSocketTalkType\":\"TALK\",\"callForwardingNumber\":\"\"}\u0000"
-    
+        "톨, 벤티, 그란데 중에 말해줘.",
+        "한 잔 시킬게!"
     ]
 }
