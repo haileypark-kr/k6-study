@@ -58,7 +58,7 @@
     "imageDirectory" : null,
     "imageFileName" : null,
     "fileName" : null,
-    "type" : "VOICE",
+    "type" : "CHAT",
     "contentsMaxSize" : null,
     "sttLmType" : "LM1",
     "sttAnswerCount" : 2,

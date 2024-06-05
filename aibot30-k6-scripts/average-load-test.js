@@ -84,6 +84,7 @@ export default () => {
                 console.log("out close", sessionKey);
                 websocket.setTimeout(function () {
                     requestClose(websocket, sessionKey);
+                    CountSessions.add(-1);
                 }, sleepMillis);
             }
             // 헬스체크
@@ -94,7 +95,7 @@ export default () => {
                 console.error(sessionKey, "미답변", message);
                 fail(`Invalid response for session ${sessionKey} ${message}`, sessionKey, message);
             }
-            
+
             closeOnTimeout(websocket, sessionKey, sleepMillis);
         });
     })
