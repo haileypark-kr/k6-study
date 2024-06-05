@@ -77,12 +77,14 @@ export default () => {
                     requestSlotFilling(websocket, sessionKey, 1);
                 }, sleepMillis);
             }
-            // 답변노드 + 소켓 close 요청
+            // 답변노드 + close 요청
             else if (message.includes(expectedBotMessages[4])) {
                 RateValidResponse.add(true);
 
                 console.log("out close", sessionKey);
-                websocket.close();
+                websocket.setTimeout(function () {
+                    requestClose(websocket, sessionKey);
+                }, sleepMillis);
             }
             // 헬스체크
             else if (message === "h") {
@@ -92,14 +94,8 @@ export default () => {
                 console.error(sessionKey, "미답변", message);
                 fail(`Invalid response for session ${sessionKey} ${message}`, sessionKey, message);
             }
-
-            // TODO 엔진 세션 삭제 확인
-            // websocket.on('close', function () {
-            //     console.log('disconnected', sessionKey);
-            //     CountSessions.add(-1);
-            // });
-
-            closeOnTimeout(websocket, sleepMillis);
+            
+            closeOnTimeout(websocket, sessionKey, sleepMillis);
         });
     })
 };
@@ -143,15 +139,22 @@ const requestSlotFilling = (websocket, sessionKey, sfIndex) => {
     const userMsg = wsMessages[3 + sfIndex].replace("{sessionKey}", sessionKey).replace("{channelToken}", channelToken)
     send(websocket, sessionKey, userMsg);
 }
+
+const requestClose = (websocket, sessionKey) => {
+    const userMsg = wsMessages[5].replace("{sessionKey}", sessionKey).replace("{channelToken}", channelToken);
+    send(websocket, sessionKey, userMsg);
+    websocket.close();
+}
+
 const send = (websocket, sessionKey, msg) => {
     console.log("out", sessionKey, msg);
     websocket.send(JSON.stringify([msg]));
 }
 
-const closeOnTimeout = (websocket, timeoutSeconds) => {
+const closeOnTimeout = (websocket, sessionKey, timeoutSeconds) => {
     // 5초 이상 응답이 안오면 소켓 강제 종료
     websocket.setTimeout(function () {
         console.error('5 seconds passed, closing the socket');
-        websocket.close();
+        requestClose(websocket, sessionKey)
     }, timeoutSeconds * 5);
 }

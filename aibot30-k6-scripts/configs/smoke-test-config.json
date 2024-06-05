@@ -5,7 +5,7 @@
     "channelToken": "91812fa5-eb2b-4a20-932d-f5daee671b91",
     "userKey": "",
     "k6Options": {
-        "vus": 1,
+        "vus": 3,
         "duration": "30s",
         "thresholds": {
             "http_req_failed": [
@@ -28,7 +28,8 @@
         "SUBSCRIBE\nid:sub-0\ndestination:/sub/room/{sessionKey}\n\n\u0000",
         "SEND\ndestination:/pub/message\ncontent-length:450\n\n{\"sessionKey\":\"{sessionKey}\",\"channelToken\":\"{channelToken}\",\"query\":\"커피 주문\",\"queryValue\":null,\"isChangeHuman\":false,\"isClose\":false,\"inputStatus\":\"WRITING\",\"userKey\":null,\"chatInputType\":\"DIRECT\",\"id\":\"66MZ1zGDtE7p7Ga8x3Re\",\"currentTime\":\"오후 3:43\",\"className\":\"name\",\"type\":\"TALK\",\"personalData\":false,\"displayText\":\"커피 주문\",\"recommend\":false,\"intentId\":\"\",\"webSocketTalkType\":\"TALK\"}\u0000",
         "SEND\ndestination:/pub/message\ncontent-length:459\n\n{\"sessionKey\":\"{sessionKey}\",\"channelToken\":\"{channelToken}\",\"query\":\"아메리카노요\",\"queryValue\":null,\"isChangeHuman\":false,\"isClose\":true,\"inputStatus\":\"WRITING\",\"userKey\":null,\"chatInputType\":\"DIRECT\",\"id\":\"5BsqUoiQsK8yMTsXb5F8\",\"currentTime\":\"오후 3:43\",\"className\":\"name\",\"type\":\"TALK\",\"personalData\":false,\"displayText\":\"아메리카노요\",\"recommend\":false,\"intentId\":\"\",\"webSocketTalkType\":\"TALK\"}\u0000",
-        "SEND\ndestination:/pub/message\ncontent-length:447\n\n{\"sessionKey\":\"{sessionKey}\",\"channelToken\":\"{channelToken}\",\"query\":\"톨사이즈\",\"queryValue\":null,\"isChangeHuman\":false,\"isClose\":true,\"inputStatus\":\"WRITING\",\"userKey\":null,\"chatInputType\":\"DIRECT\",\"id\":\"MDKNr0EWr8M1jXfc8exJ\",\"currentTime\":\"오후 3:44\",\"className\":\"name\",\"type\":\"TALK\",\"personalData\":false,\"displayText\":\"톨사이즈\",\"recommend\":false,\"intentId\":\"\",\"webSocketTalkType\":\"TALK\"}\u0000"
+        "SEND\ndestination:/pub/message\ncontent-length:447\n\n{\"sessionKey\":\"{sessionKey}\",\"channelToken\":\"{channelToken}\",\"query\":\"톨사이즈\",\"queryValue\":null,\"isChangeHuman\":false,\"isClose\":true,\"inputStatus\":\"WRITING\",\"userKey\":null,\"chatInputType\":\"DIRECT\",\"id\":\"MDKNr0EWr8M1jXfc8exJ\",\"currentTime\":\"오후 3:44\",\"className\":\"name\",\"type\":\"TALK\",\"personalData\":false,\"displayText\":\"톨사이즈\",\"recommend\":false,\"intentId\":\"\",\"webSocketTalkType\":\"TALK\"}\u0000",
+        "SEND\ndestination:/pub/message\ncontent-length:147\n\n{\"webSocketTalkType\":\"QUIT\",\"sessionKey\":\"{sessionKey}\",\"channelToken\":\"{channelToken}\",\"query\":null}\u0000"
     ],
     "expectedBotMessages": [
         "o",
