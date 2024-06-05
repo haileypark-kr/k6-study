@@ -14,16 +14,11 @@ const userKey = config.userKey;
  * @returns 세션키
  */
 export const start = (RateValidResponse) => {
-    const url = urlPrefix + channelCode + "/v1/start";
+    const url = urlPrefix + "/v1/start";
     const body = {
-        "channelToken": channelToken,
+        "channelId": channelToken,
         "userKey": userKey,
-        "transactionId": "test-transaction-id-001",
-        "timestamp": timestamp(),
-        "channelId": channelCode,
-        "botProfile": "TEST",
-        "ucid": "",
-        "custom": {}
+        "platformType":"WEB"
     };
 
     const res = http.post(url, JSON.stringify(body), {
@@ -32,7 +27,7 @@ export const start = (RateValidResponse) => {
         },
         headers: { 'Content-Type': 'application/json' },
     });
-    const sessionKey = JSON.parse(res.body).sessionKey;
+    const sessionKey = JSON.parse(res.body).data.sessionKey;
 
     const valid = check(res, {
         'is status 200': (r) => r.status === 200,
@@ -45,6 +40,8 @@ export const start = (RateValidResponse) => {
     if (!valid) {
         console.error("Failed to start -", res);
         fail(`status code was not 200(${res.status}) or sessionKey was not in response body`);
+    } else {
+        console.info("Success to start -", res);
     }
 
     return sessionKey;

@@ -1,7 +1,7 @@
 {
-    "urlPrefix": "http://localhost:8081/gateway/voice/",
-    "channelCode": "test2",
-    "channelToken": "592f9d6c-31ac-44a9-8d12-13df1c23ee2d",
+    "urlPrefix": "http://localhost:8081/gateway/web",
+    "channelCode": "K6-LOAD-TEST-CHATBOT-CH",
+    "channelToken": "43ee3e9c-4bf0-4a3b-b843-236f4fc363fe",
     "userKey": "",
     "k6Options": {
         "stages": [
@@ -64,8 +64,16 @@
         "톨 사이즈"
     ],
     "expectedBotMessages": [
-        "커피 뭐 마실래?",
-        "톨, 벤티, 그란데 중에 말해줘.",
-        "한 잔 시킬게!"
+        "커피 뭐 마실래? 아메리카노, 카페라떼, 콜드브루 중에 골라봐.",
+        "아메리카노 를 무슨 사이즈로 시킬래? 톨, 벤티, 그란데 중에 말해줘.",
+        "아메리카노 톨 로  한 잔 시킬게!"
+    ],
+    "wsMessages": [
+        "CONNECT\naccept-version:1.1,1.0\nheart-beat:10000,10000\n\n\u0000",
+        "SUBSCRIBE\nid:sub-0\ndestination:/sub/room/gw1_webSessionKey\n\n\u0000",
+        "SEND\ndestination:/pub/message/TEST\ncontent-length:471\n\n{\"sessionKey\":\"gw1_webSessionKey\",\"channelToken\":\"43ee3e9c-4bf0-4a3b-b843-236f4fc363fe\",\"query\":\"커피 주문\",\"queryValue\":null,\"isChangeHuman\":false,\"isClose\":false,\"inputStatus\":\"TALK\",\"userKey\":\"\",\"chatInputType\":\"DIRECT\",\"id\":\"vbX28DM3mg4NovDHlTIo\",\"currentTime\":\"오후 5:36\",\"className\":\"name\",\"type\":\"TALK\",\"personalData\":false,\"displayText\":\"커피 주문\",\"recommend\":false,\"intentId\":\"\",\"webSocketTalkType\":\"TALK\",\"callForwardingNumber\":\"\"}\u0000",
+        "SEND\ndestination:/pub/message/TEST\ncontent-length:494\n\n{\"sessionKey\":\"gw1_webSessionKey\",\"channelToken\":\"43ee3e9c-4bf0-4a3b-b843-236f4fc363fe\",\"query\":\"아메리카노 마실래\",\"queryValue\":null,\"isChangeHuman\":false,\"isClose\":true,\"inputStatus\":\"TALK\",\"userKey\":\"\",\"chatInputType\":\"DIRECT\",\"id\":\"zDScMxrhPR0epM9Hgh7k\",\"currentTime\":\"오후 5:36\",\"className\":\"name\",\"type\":\"TALK\",\"personalData\":false,\"displayText\":\"아메리카노 마실래\",\"recommend\":false,\"intentId\":\"\",\"webSocketTalkType\":\"TALK\",\"callForwardingNumber\":\"\"}\u0000",
+        "SEND\ndestination:/pub/message/TEST\ncontent-length:470\n\n{\"sessionKey\":\"gw1_webSessionKey\",\"channelToken\":\"43ee3e9c-4bf0-4a3b-b843-236f4fc363fe\",\"query\":\"톨 사이즈\",\"queryValue\":null,\"isChangeHuman\":false,\"isClose\":true,\"inputStatus\":\"TALK\",\"userKey\":\"\",\"chatInputType\":\"DIRECT\",\"id\":\"OYCGWvSpSVM6fgLFjoft\",\"currentTime\":\"오후 5:36\",\"className\":\"name\",\"type\":\"TALK\",\"personalData\":false,\"displayText\":\"톨 사이즈\",\"recommend\":false,\"intentId\":\"\",\"webSocketTalkType\":\"TALK\",\"callForwardingNumber\":\"\"}\u0000"
+    
     ]
 }

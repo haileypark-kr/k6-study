@@ -6,7 +6,8 @@
 import { Rate, Counter } from 'k6/metrics';
 import { sleep } from 'k6';
 import { config } from './configs/import-configs.js';
-import { start, findIntent, slotFilling, close } from './http-requests-utils.js';
+import { start, close } from './http-requests-utils.js';
+import { wsConnect } from './ws-requests-utils.js';
 
 
 // Custom Metric 추가
@@ -35,14 +36,16 @@ export default () => {
     CountSessions.add(1);
     sleep(sleepSeconds);
 
-    findIntent(sessionKey, config.userMessages[0], config.expectedBotMessages[0], RateValidResponse);
-    sleep(sleepSeconds);
+    wsConnect(sessionKey, config.wsMessages, sleepSeconds, RateValidResponse);
 
-    slotFilling(sessionKey, config.userMessages[1], config.expectedBotMessages[1], RateValidResponse);
-    sleep(sleepSeconds);
+    // findIntent(sessionKey, config.userMessages[0], config.expectedBotMessages[0], RateValidResponse);
+    // sleep(sleepSeconds);
 
-    slotFilling(sessionKey, config.userMessages[2], config.expectedBotMessages[2], RateValidResponse);
-    sleep(sleepSeconds);
+    // slotFilling(sessionKey, config.userMessages[1], config.expectedBotMessages[1], RateValidResponse);
+    // sleep(sleepSeconds);
+
+    // slotFilling(sessionKey, config.userMessages[2], config.expectedBotMessages[2], RateValidResponse);
+    // sleep(sleepSeconds);
 
     close(sessionKey, RateValidResponse);
     CountSessions.add(-1);
