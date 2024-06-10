@@ -1,7 +1,8 @@
 {
-    "urlPrefix": "http://localhost:8081/gateway/voice/",
-    "channelCode": "test2",
-    "channelToken": "592f9d6c-31ac-44a9-8d12-13df1c23ee2d",
+    "startUrlPrefix": "http://localhost:8082/{channelCode}/chat.html",
+    "socketUrlPrefix": "ws://localhost:8081/ws-stomp/{randNum3}/{randomString8}/websocket",
+    "channelCode": "chatbotloadtest",
+    "channelToken": "91812fa5-eb2b-4a20-932d-f5daee671b91",
     "userKey": "",
     "k6Options": {
         "stages": [
@@ -59,12 +60,17 @@
     },
     "sleepSeconds": 1,
     "userMessages": [
-        "커피 주문",
-        "아메리카노 마실래",
-        "톨 사이즈"
+        "CONNECT\naccept-version:1.1,1.0\nheart-beat:10000,10000\n\n\u0000",
+        "SUBSCRIBE\nid:sub-0\ndestination:/sub/room/{sessionKey}\n\n\u0000",
+        "SEND\ndestination:/pub/message\ncontent-length:450\n\n{\"sessionKey\":\"{sessionKey}\",\"channelToken\":\"{channelToken}\",\"query\":\"커피 주문\",\"queryValue\":null,\"isChangeHuman\":false,\"isClose\":false,\"inputStatus\":\"WRITING\",\"userKey\":null,\"chatInputType\":\"DIRECT\",\"id\":\"66MZ1zGDtE7p7Ga8x3Re\",\"currentTime\":\"오후 3:43\",\"className\":\"name\",\"type\":\"TALK\",\"personalData\":false,\"displayText\":\"커피 주문\",\"recommend\":false,\"intentId\":\"\",\"webSocketTalkType\":\"TALK\"}\u0000",
+        "SEND\ndestination:/pub/message\ncontent-length:459\n\n{\"sessionKey\":\"{sessionKey}\",\"channelToken\":\"{channelToken}\",\"query\":\"아메리카노요\",\"queryValue\":null,\"isChangeHuman\":false,\"isClose\":true,\"inputStatus\":\"WRITING\",\"userKey\":null,\"chatInputType\":\"DIRECT\",\"id\":\"5BsqUoiQsK8yMTsXb5F8\",\"currentTime\":\"오후 3:43\",\"className\":\"name\",\"type\":\"TALK\",\"personalData\":false,\"displayText\":\"아메리카노요\",\"recommend\":false,\"intentId\":\"\",\"webSocketTalkType\":\"TALK\"}\u0000",
+        "SEND\ndestination:/pub/message\ncontent-length:447\n\n{\"sessionKey\":\"{sessionKey}\",\"channelToken\":\"{channelToken}\",\"query\":\"톨사이즈\",\"queryValue\":null,\"isChangeHuman\":false,\"isClose\":true,\"inputStatus\":\"WRITING\",\"userKey\":null,\"chatInputType\":\"DIRECT\",\"id\":\"MDKNr0EWr8M1jXfc8exJ\",\"currentTime\":\"오후 3:44\",\"className\":\"name\",\"type\":\"TALK\",\"personalData\":false,\"displayText\":\"톨사이즈\",\"recommend\":false,\"intentId\":\"\",\"webSocketTalkType\":\"TALK\"}\u0000",
+        "SEND\ndestination:/pub/message\ncontent-length:147\n\n{\"webSocketTalkType\":\"QUIT\",\"sessionKey\":\"{sessionKey}\",\"channelToken\":\"{channelToken}\",\"query\":null}\u0000"
     ],
     "expectedBotMessages": [
-        "커피 뭐 마실래?",
+        "o",
+        "CONNECTED",
+        "커피 뭐 마실래? 아메리카노, 카페라떼, 콜드브루 중에 골라봐.",
         "톨, 벤티, 그란데 중에 말해줘.",
         "한 잔 시킬게!"
     ]

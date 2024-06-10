@@ -3,9 +3,7 @@ import { config } from './configs/import-configs.js'
 import { check, fail } from 'k6';
 
 const startUrlPrefix = config.startUrlPrefix;
-const channelToken = config.channelToken;
 const channelCode = config.channelCode;
-const userKey = config.userKey;
 
 
 /**

@@ -7,7 +7,7 @@ import { Rate, Counter } from 'k6/metrics';
 import { config } from './configs/import-configs.js';
 import { start } from './http-requests-utils.js';
 import ws from 'k6/ws';
-
+import { fail } from 'k6';
 
 // Custom Metric 추가
 export const RateValidResponse = new Rate('valid_response');
@@ -34,7 +34,15 @@ export function setup() {
 }
 
 /**
- * VU
+ * Iteration
+ * 1. start (html 요청 후 html 내의 세션키 파싱)
+ * 2. ws connect
+ * 3. ws subscribe
+ * 4. 의도 추론
+ * 5. 슬롯필링1
+ * 6. 슬롯필링2
+ * 7. QUIT
+ * 8. ws close
  */
 export default () => {
 
@@ -45,6 +53,7 @@ export default () => {
 
     ws.connect(socketUrl, {}, function (websocket) {
         websocket.on('message', (message) => {
+
             // CONNECT
             if (message === expectedBotMessages[0]) {
                 RateValidResponse.add(true);
@@ -81,16 +90,14 @@ export default () => {
             else if (message.includes(expectedBotMessages[4])) {
                 RateValidResponse.add(true);
 
-                console.log("out close", sessionKey);
                 websocket.setTimeout(function () {
                     requestClose(websocket, sessionKey);
                     CountSessions.add(-1);
                 }, sleepMillis);
             }
             // 헬스체크
-            else if (message === "h") {
-
-            } else {
+            else if (message === "h") { }
+            else {
                 RateValidResponse.add(false);
                 console.error(sessionKey, "미답변", message);
                 fail(`Invalid response for session ${sessionKey} ${message}`, sessionKey, message);
@@ -119,7 +126,7 @@ const getRandomSocketEndpoint = () => {
         }
         return result;
     }
-    return socketUrlPrefix.replace("{randNum3}",getRandomNumber3()).replace("{randomString8}", getRandomString8());
+    return socketUrlPrefix.replace("{randNum3}", getRandomNumber3()).replace("{randomString8}", getRandomString8());
 }
 
 const requestConnectHealthCheck = (websocket, sessionKey) => {
@@ -148,14 +155,15 @@ const requestClose = (websocket, sessionKey) => {
 }
 
 const send = (websocket, sessionKey, msg) => {
-    console.log("out", sessionKey, msg);
+    // console.log("out", sessionKey, msg);
     websocket.send(JSON.stringify([msg]));
 }
 
 const closeOnTimeout = (websocket, sessionKey, timeoutSeconds) => {
-    // 5초 이상 응답이 안오면 소켓 강제 종료
+    // 10초 이상 응답이 안오면 소켓 강제 종료
     websocket.setTimeout(function () {
-        console.error('5 seconds passed, closing the socket');
+        console.error('10 seconds passed, closing the socket');
         requestClose(websocket, sessionKey)
-    }, timeoutSeconds * 5);
+        fail(`Session ${sessionKey} timed out`, sessionKey);
+    }, timeoutSeconds * 10);
 }
